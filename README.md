@@ -2,7 +2,7 @@
 # Tale Config
 **A Tale Framework Component**
 
-# What is Tale Runtime?
+# What is Tale Config?
 
 A small configuration utility library.
 
