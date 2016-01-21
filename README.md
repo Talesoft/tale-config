@@ -45,3 +45,4 @@ class DbConnection implements ConfigurableInterface
     }
 }
 ```
+
