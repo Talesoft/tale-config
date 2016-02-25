@@ -5,6 +5,7 @@ namespace Tale\Config\Format;
 use Tale\Config\FormatInterface;
 use Tale\Dom\Text;
 use Tale\Dom\Element;
+use Exception;
 
 class Xml implements FormatInterface
 {

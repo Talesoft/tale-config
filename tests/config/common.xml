@@ -5,8 +5,6 @@
         <password>12345</password>
     </db>
     <models>a</models>
-    <models>b</models>
-    <models>c</models>
     <a>
         <b>
             <c>

@@ -2,53 +2,42 @@
 
 namespace Tale;
 
-
-use Tale\Config\Format\Ini;
-use Tale\Config\Format\Json;
-use Tale\Config\Format\Php;
-use Symfony\Component\Yaml\Yaml;
+use Tale\Config\Factory;
 use Tale\Config\FormatInterface;
-use Tale\Config\Format\Xml;
 
 final class Config
 {
 
-    /**
-     * @var FormatInterface[]
-     */
-    private static $_formats = [
-        'ini' => Ini::class,
-        'json' => Json::class,
-        'php' => Php::class,
-        'xml' => Xml::class,
-        //'yaml' => Yaml::class
-    ];
-
-    public static function load($path, $format = null)
+    public static function load($path, $format = null, array $aliases = null)
     {
+
+        $formatFactory = new Factory($aliases);
 
         if (!$format) {
 
             $ext = pathinfo($path, PATHINFO_EXTENSION);
-            foreach (self::$_formats as $name => $className) {
+            foreach ($formatFactory->getAliases() as $alias => $className) {
 
                 if (in_array(".$ext", $className::getExtensions())) {
 
-                    $format = $name;
+                    $format = $alias;
                     break;
                 }
             }
         }
 
-
-
-        if (!$format || !isset(self::$_formats[$format]))
+        if (!$format)
             throw new \RuntimeException(
-                "Failed to load config file $path: Config format not ".
-                "recognized"
+                "Failed to load config file $path: ".
+                "No valid format handler found"
             );
 
-        $className = self::$_formats[$format];
+        if (!($className = $formatFactory->resolveClassName($format)))
+            throw new FactoryException(
+                "Failed to resolve class name $format. ".
+                "Make sure it implements ".FormatInterface::class
+            );
+
         return $className::load($path);
     }
 }

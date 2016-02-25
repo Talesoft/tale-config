@@ -9,15 +9,15 @@ use Tale\Config;
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testXmlConfig()
+    public function testLoading()
     {
 
-        $this->assertEquals([
+        $expected = [
             'db'     => [
                 'host'     => 'localhost',
                 'password' => '12345',
             ],
-            'models' => 'c',
+            'models' => 'a',
             'a'      => [
                 'b' => [
                     'c' => [
@@ -25,6 +25,12 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
-        ], Config::load(__DIR__.'/config/common.xml'));
+        ];
+
+        $this->assertEquals($expected, Config::load(__DIR__.'/config/common.xml'), 'XML Config');
+        $this->assertEquals($expected, Config::load(__DIR__.'/config/common.yml'), 'YAML Config');
+        $this->assertEquals($expected, Config::load(__DIR__.'/config/common.json'), 'JSON Config');
+        $this->assertEquals($expected, Config::load(__DIR__.'/config/common.php'), 'PHP Config');
+        $this->assertEquals($expected, Config::load(__DIR__.'/config/common.ini'), 'INI Config');
     }
 }
