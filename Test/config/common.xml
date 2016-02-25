@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <db>
+        <host>localhost</host>
+        <password>12345</password>
+    </db>
+    <models>a</models>
+    <models>b</models>
+    <models>c</models>
+    <a>
+        <b>
+            <c>
+                <d>ABCD</d>
+            </c>
+        </b>
+    </a>
+</config>

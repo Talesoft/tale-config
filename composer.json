@@ -18,7 +18,9 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.5.0"
+        "php": ">=5.5.0",
+        "talesoft/tale-dom": "*",
+        "symfony/yaml": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0"
@@ -27,5 +29,9 @@
         "psr-4": {
             "Tale\\": ""
         }
+    },
+    "suggest": {
+        "talesoft/tale-dom": "for XML-configuration",
+        "symfony/yaml": "for YAML-configuration"
     }
 }
