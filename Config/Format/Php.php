@@ -7,15 +7,15 @@ use Tale\Config\FormatInterface;
 class Php implements FormatInterface
 {
 
+    public function load($path)
+    {
+
+        return include($path);
+    }
+
     public static function getExtensions()
     {
 
         return ['.php', '.inc'];
-    }
-
-    public static function load($path)
-    {
-
-        return include($path);
     }
 }

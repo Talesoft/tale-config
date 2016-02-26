@@ -7,20 +7,13 @@ use Tale\Config\FormatInterface;
 class Ini implements FormatInterface
 {
 
-    public static function getExtensions()
+    public function load($path)
     {
 
-        return ['.ini'];
+        return $this->_getOptionsFromIniArray(parse_ini_file($path, true));
     }
 
-    public static function load($path)
-    {
-
-        var_dump(self::_getOptionsFromIniArray(parse_ini_file($path, true)));
-        return self::_getOptionsFromIniArray(parse_ini_file($path, true));
-    }
-
-    private static function _getOptionsFromIniArray(array $array)
+    private function _getOptionsFromIniArray(array $array)
     {
 
         $result = [];
@@ -30,7 +23,7 @@ class Ini implements FormatInterface
 
                 $result = array_replace_recursive(
                     $result,
-                    self::_getOptionsFromIniArray($value)
+                    $this->_getOptionsFromIniArray($value)
                 );
                 continue;
             }
@@ -58,7 +51,7 @@ class Ini implements FormatInterface
 
             if (is_array($value)) {
 
-                $target[$key] = self::_getOptionsFromIniArray($value);
+                $target[$key] = $this->_getOptionsFromIniArray($value);
                 continue;
             }
 
@@ -66,5 +59,11 @@ class Ini implements FormatInterface
         }
 
         return $result;
+    }
+
+    public static function getExtensions()
+    {
+
+        return ['.ini'];
     }
 }

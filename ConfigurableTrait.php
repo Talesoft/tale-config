@@ -23,6 +23,8 @@
 
 namespace Tale;
 
+use Tale\Config\FormatInterface;
+
 /**
  * Provides some utility methods to work with configuration arrays
  *
@@ -44,14 +46,15 @@ trait ConfigurableTrait
      *
      * @param array      $defaults    the default options
      * @param array|null $userOptions the optional options passed by the user
+     * @param bool       $recursive
      */
-    public function defineOptions(array $defaults, array $userOptions = null)
+    public function defineOptions(array $defaults, array $userOptions = null, $recursive = false)
     {
 
-        $this->setOptions($defaults);
+        $this->_options = $defaults;
 
         if ($userOptions)
-            $this->setOptions($userOptions, true);
+            $this->setOptions($userOptions, $recursive);
     }
 
     /**
@@ -174,5 +177,17 @@ trait ConfigurableTrait
 
         if (isset($this->_options[$name]))
             $this->_options[$target][$targetName] = $this->_options[$name];
+    }
+
+    public function loadOptions($path, $recursive = false, FormatInterface $format = null)
+    {
+
+        return $this->setOptions(Config::load($path, $format), $recursive);
+    }
+
+    public function loadDefaults($path, $recursive = false, FormatInterface $format = null)
+    {
+
+        return $this->setDefaults(Config::load($path, $format), $recursive);
     }
 }

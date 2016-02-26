@@ -10,13 +10,7 @@ use Exception;
 class Xml implements FormatInterface
 {
 
-    public static function getExtensions()
-    {
-
-        return ['.xml', '.config'];
-    }
-
-    public static function load($path)
+    public function load($path)
     {
 
         if (!class_exists('Tale\\Dom\\Parser'))
@@ -25,10 +19,10 @@ class Xml implements FormatInterface
                 "`talesoft/tale-dom` package"
             );
 
-        return self::_getOptionsFromElement(Element::fromFile($path));
+        return $this->_getOptionsFromElement(Element::fromFile($path));
     }
 
-    private static function _getOptionsFromElement(Element $element)
+    private function _getOptionsFromElement(Element $element)
     {
 
         if (!$element->hasChildren())
@@ -41,9 +35,15 @@ class Xml implements FormatInterface
                 return $child->getText();
 
             if ($child instanceof Element)
-                $result[$child->getName()] = self::_getOptionsFromElement($child);
+                $result[$child->getName()] = $this->_getOptionsFromElement($child);
         }
 
         return $result;
+    }
+
+    public static function getExtensions()
+    {
+
+        return ['.xml', '.config'];
     }
 }

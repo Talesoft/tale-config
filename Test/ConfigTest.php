@@ -2,8 +2,6 @@
 
 namespace Tale\Test;
 
-
-
 use Tale\Config;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase

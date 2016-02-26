@@ -19,7 +19,9 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.5.0",
-        "talesoft/tale-factory": "~0.1"
+        "talesoft/tale-factory": "~0.1",
+        "talesoft/tale-dom": "*",
+        "symfony/yaml": "*"
     },
     "autoload": {
         "psr-4": {

@@ -2,42 +2,74 @@
 
 namespace Tale;
 
-use Tale\Config\Factory;
+use Tale\Config\Format\Ini;
+use Tale\Config\Format\Json;
+use Tale\Config\Format\Php;
+use Tale\Config\Format\Xml;
+use Tale\Config\Format\Yaml;
 use Tale\Config\FormatInterface;
 
 final class Config
 {
 
-    public static function load($path, $format = null, array $aliases = null)
+    private static $_formats = [
+        'ini' => Ini::class,
+        'json' => Json::class,
+        'php' => Php::class,
+        'xml' => Xml::class,
+        'yaml' => Yaml::class
+    ];
+    private static $_formatFactory = null;
+
+    public static function createFormatFactory(array $formats = null)
     {
 
-        $formatFactory = new Factory($aliases);
+        return new Factory(FormatInterface::class, $formats);
+    }
 
-        if (!$format) {
+    public static function getFormatFactory()
+    {
 
-            $ext = pathinfo($path, PATHINFO_EXTENSION);
-            foreach ($formatFactory->getAliases() as $alias => $className) {
+        if (self::$_formatFactory === null)
+            self::$_formatFactory = self::createFormatFactory(
+                self::$_formats
+            );
 
-                if (in_array(".$ext", $className::getExtensions())) {
+        return self::$_formatFactory;
+    }
 
-                    $format = $alias;
-                    break;
-                }
+    public static function getFormatForPath($path)
+    {
+
+        $factory = self::getFormatFactory();
+        $ext = pathinfo($path, PATHINFO_EXTENSION);
+        /** @var FormatInterface[] $aliases */
+        $aliases = $factory->getAliases();
+        $formatAlias = null;
+        foreach ($aliases as $alias => $className) {
+
+            if (in_array(".$ext", $className::getExtensions())) {
+
+                $formatAlias = $alias;
+                break;
             }
         }
 
-        if (!$format)
+        if (!$formatAlias)
             throw new \RuntimeException(
-                "Failed to load config file $path: ".
+                "Failed to get format for $path: ".
                 "No valid format handler found"
             );
 
-        if (!($className = $formatFactory->resolveClassName($format)))
-            throw new FactoryException(
-                "Failed to resolve class name $format. ".
-                "Make sure it implements ".FormatInterface::class
-            );
+        return $factory->create($formatAlias);
+    }
 
-        return $className::load($path);
+    public static function load($path, FormatInterface $format = null)
+    {
+
+        if (!$format)
+            $format = self::getFormatForPath($path);
+
+        return $format->load($path);
     }
 }

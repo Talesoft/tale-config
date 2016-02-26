@@ -9,13 +9,7 @@ use Exception;
 class Yaml implements FormatInterface
 {
 
-    public static function getExtensions()
-    {
-
-        return ['.yaml', '.yml'];
-    }
-
-    public static function load($path)
+    public function load($path)
     {
 
         if (!class_exists('Symfony\\Component\\Yaml\\Yaml'))
@@ -24,7 +18,12 @@ class Yaml implements FormatInterface
                 "`symfony/yaml` package"
             );
 
-        ;
         return Parser::parse(file_get_contents($path));
+    }
+
+    public static function getExtensions()
+    {
+
+        return ['.yaml', '.yml'];
     }
 }
