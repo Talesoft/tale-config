@@ -73,15 +73,18 @@ trait ConfigurableTrait
      *
      * You can pass an optional default value (Default: null)
      *
-     * @param string $name     the name of the option to return
-     * @param mixed $default  the default value if the option is not set (Default: null)
+     * @param string $name         the name of the option to return
+     * @param mixed  $defaultValue the default value if the option is not set (Default: null)
      *
      * @return mixed
      */
-    public function getOption($name, $default = null)
+    public function getOption($name, $defaultValue = null)
     {
 
-        return isset($this->_options[$name]) ? $this->_options[$name] : $default;
+        if (strstr($name, '.'))
+            return Config::resolve($name, $this->_options, $defaultValue);
+
+        return isset($this->_options[$name]) ? $this->_options[$name] : $defaultValue;
     }
 
     /**
