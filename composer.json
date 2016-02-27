@@ -4,7 +4,7 @@
     "keywords": ["config", "options"],
     "description": "Lightweight configuration interfaces and utilities",
     "license": "MIT",
-    "homepage": "http://config.tale.talesoft.io",
+    "homepage": "http://docs.talesoft.io/tale-framework/tale/config",
     "authors": [
         {
             "name": "Talesoft",
