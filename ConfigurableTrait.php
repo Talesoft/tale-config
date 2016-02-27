@@ -193,4 +193,12 @@ trait ConfigurableTrait
 
         return $this->setDefaults(Config::load($path, $format), $recursive);
     }
+
+    public function interpolateOptions(array &$source = null, $defaultValue = null)
+    {
+
+        Config::interpolateArray($this->_options, $source, $defaultValue);
+
+        return $this;
+    }
 }
