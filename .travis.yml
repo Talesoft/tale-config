@@ -16,6 +16,4 @@ before_install:
 install:
   - composer clear-cache
   - composer self-update
-  - composer require "talesoft/tale-dom:*"
-  - composer require "symfony/yaml:*"
   - composer install

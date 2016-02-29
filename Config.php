@@ -8,6 +8,7 @@ use Tale\Config\Format\Php;
 use Tale\Config\Format\Xml;
 use Tale\Config\Format\Yaml;
 use Tale\Config\FormatInterface;
+use Tale\Factory\SingletonFactory;
 
 final class Config
 {
@@ -19,12 +20,13 @@ final class Config
         'xml'  => Xml::class,
         'yaml' => Yaml::class
     ];
+
     private static $_formatFactory = null;
 
     public static function createFormatFactory(array $formats = null)
     {
 
-        return new Factory(FormatInterface::class, $formats);
+        return new SingletonFactory(FormatInterface::class, $formats);
     }
 
     public static function getFormatFactory()
@@ -38,30 +40,46 @@ final class Config
         return self::$_formatFactory;
     }
 
-    public static function getFormatForPath($path)
+    public static function resolve($path)
     {
 
         $factory = self::getFormatFactory();
         $ext = pathinfo($path, PATHINFO_EXTENSION);
+
+        if (!empty($ext) && file_exists($path))
+            return $path;
+
         /** @var FormatInterface[] $aliases */
         $aliases = $factory->getAliases();
-        $formatAlias = null;
-        foreach ($aliases as $alias => $className) {
+        foreach ($aliases as $extension => $className) {
 
-            if (in_array(".$ext", $className::getExtensions())) {
-
-                $formatAlias = $alias;
-                break;
-            }
+            $extPath = "$path.$extension";
+            if (file_exists($extPath))
+                return $extPath;
         }
 
-        if (!$formatAlias)
-            throw new \RuntimeException(
-                "Failed to get format for $path: ".
-                "No valid format handler found"
-            );
+        return null;
+    }
 
-        return $factory->create($formatAlias);
+    public static function load($path, $optional = false)
+    {
+
+        $path = self::resolve($path);
+        $factory = self::getFormatFactory();
+
+        if (!$path) {
+
+            if ($optional)
+                return [];
+
+            throw new ConfigException(
+                "Failed to resolve configuration file $path: ".
+                "The file was not found, even with any of the following ".
+                "registered extensions: ".implode(', ', array_keys($factory->getAliases()))
+            );
+        }
+
+        return $factory->get(pathinfo($path, PATHINFO_EXTENSION))->load($path);
     }
 
     /**
@@ -79,7 +97,7 @@ final class Config
      *
      * @return array|null The found value or the default value, if none found (Default: null)
      */
-    public static function resolve($key, array $source, $defaultValue = null, $delimiter = null)
+    public static function get($key, array $source, $defaultValue = null, $delimiter = null)
     {
 
         $delimiter = $delimiter ?: '.';
@@ -98,6 +116,43 @@ final class Config
         }
 
         return $current;
+    }
+
+    /**
+     * Resolves a key.subKey.subSubKey-style string to a deep array value
+     *
+     * The function accesses multi-dimensional keys with a delimiter given (Default: Dot (.))
+     *
+     * @protip If you want to throw an exception if no key is found, pass the exception as the default value
+     *         and throw it, if the result is an Exception-type
+     *
+     * @param string      $key          The input key to operate on
+     * @param mixed       $value        The default value if no key is found
+     * @param array       $source       The array to search values in
+     * @param string|null $delimiter    The delimeter to access dimensions (Default: Dot (.))
+     *
+     * @return array|null The found value or the default value, if none found (Default: null)
+     */
+    public static function set($key, $value, array &$source, $delimiter = null)
+    {
+
+        $delimiter = $delimiter ?: '.';
+        $current = &$source;
+        $keys = explode($delimiter, $key);
+
+        $lastKey = array_pop($keys);
+        foreach ($keys as $key) {
+
+            if (is_numeric($key))
+                $key = intval($key);
+
+            if (!isset($current[$key]))
+                $current[$key] = [];
+
+            $current = &$current[$key];
+        }
+
+        $current[$lastKey] = $value;
     }
 
     /**
@@ -124,7 +179,7 @@ final class Config
             if (defined($key))
                 return constant($key);
 
-            return self::resolve($key, $source, $defaultValue, $delimiter);
+            return self::get($key, $source, $defaultValue, $delimiter);
         }, $string);
     }
 
@@ -154,14 +209,5 @@ final class Config
             else if (is_string($val))
                 $array[$key] = self::interpolate($val, $source, $defaultValue, $delimiter);
         }
-    }
-
-    public static function load($path, FormatInterface $format = null)
-    {
-
-        if (!$format)
-            $format = self::getFormatForPath($path);
-
-        return $format->load($path);
     }
 }

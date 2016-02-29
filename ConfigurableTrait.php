@@ -69,25 +69,6 @@ trait ConfigurableTrait
     }
 
     /**
-     * Returns a single option by its name.
-     *
-     * You can pass an optional default value (Default: null)
-     *
-     * @param string $name         the name of the option to return
-     * @param mixed  $defaultValue the default value if the option is not set (Default: null)
-     *
-     * @return mixed
-     */
-    public function getOption($name, $defaultValue = null)
-    {
-
-        if (strstr($name, '.'))
-            return Config::resolve($name, $this->_options, $defaultValue);
-
-        return isset($this->_options[$name]) ? $this->_options[$name] : $defaultValue;
-    }
-
-    /**
      * Merges the current options with another option array.
      *
      * The second parameter makes this recursive.
@@ -116,6 +97,25 @@ trait ConfigurableTrait
             : $merge($this->_options, $options);
 
         return $this;
+    }
+
+    /**
+     * Returns a single option by its name.
+     *
+     * You can pass an optional default value (Default: null)
+     *
+     * @param string $name         the name of the option to return
+     * @param mixed  $defaultValue the default value if the option is not set (Default: null)
+     *
+     * @return mixed
+     */
+    public function getOption($name, $defaultValue = null)
+    {
+
+        if (strstr($name, '.'))
+            return Config::get($name, $this->_options, $defaultValue);
+
+        return isset($this->_options[$name]) ? $this->_options[$name] : $defaultValue;
     }
 
     /**

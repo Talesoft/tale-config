@@ -12,10 +12,4 @@ class Json implements FormatInterface
 
         return json_decode(file_get_contents($path), true);
     }
-
-    public static function getExtensions()
-    {
-
-        return ['.json'];
-    }
 }

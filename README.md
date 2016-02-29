@@ -5,10 +5,7 @@
 # What is Tale Config?
 
 A small configuration utility library.
-
-There will soon be adapters (php, xml, yml, json etc.) and config-file management utilities.
-
-Maybe DI. Maybe not.
+It supports different adapters and a few utilities to handle option arrays and configurable objects
 
 # Installation
 
@@ -21,6 +18,7 @@ composer install
 
 # Usage
 
+## The ConfigurableTrait
 ```php
 
 use Tale\ConfigurableInterface;
@@ -37,11 +35,19 @@ class DbConnection implements ConfigurableInterface
             'host' => 'localhost',
             'user' => 'root',
             'password' => '',
-            'encoding' => 'utf-8'
+            'encoding' => 'utf-8',
+            'databases' => [
+                'db1' => 'database_1',
+                'db2' => 'database_2'
+            }
         ], $options);
         
-        var_dump($this->_options);
-        //etc., look at the source code. Docs will come soon
+        var_dump($this->getOptions()); //The current options
+        
+        var_dump($this->getOption('databases'); //['db1' => 'database_1', 'db2' => 'database_2']
+        
+        var_dump($this->getOption('databases.db1'); //database_1
+        var_dump($this->getOption('databases.db2'); //database_2
     }
 }
 ```

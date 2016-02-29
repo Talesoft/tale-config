@@ -40,10 +40,4 @@ class Xml implements FormatInterface
 
         return $result;
     }
-
-    public static function getExtensions()
-    {
-
-        return ['.xml', '.config'];
-    }
 }

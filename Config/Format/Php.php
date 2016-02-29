@@ -12,10 +12,4 @@ class Php implements FormatInterface
 
         return include($path);
     }
-
-    public static function getExtensions()
-    {
-
-        return ['.php', '.inc'];
-    }
 }

@@ -16,6 +16,7 @@ class Ini implements FormatInterface
     private function _getOptionsFromIniArray(array $array)
     {
 
+        //TODO: improve this shit.
         $result = [];
         foreach ($array as $key => $value) {
 
@@ -59,11 +60,5 @@ class Ini implements FormatInterface
         }
 
         return $result;
-    }
-
-    public static function getExtensions()
-    {
-
-        return ['.ini'];
     }
 }
