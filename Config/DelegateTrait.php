@@ -36,7 +36,7 @@ trait DelegateTrait
      *
      * @return $this
      */
-    public function setOptions(array $options, $recursive = false, $reverse = false)
+    public function mergeOptions(array $options, $recursive = false, $reverse = false)
     {
 
         if (!empty($this->optionNameSpace)) {
@@ -47,9 +47,33 @@ trait DelegateTrait
         }
 
         $this->getTargetConfigurableObject()
-             ->setOptions($options, $recursive, $reverse);
+            ->mergeOptions($options, $recursive, $reverse);
 
         return $this;
+    }
+
+    /**
+     * @param array $options
+     * @param bool  $recursive
+     *
+     * @return $this
+     */
+    public function setOptions(array $options, $recursive = false)
+    {
+
+        return $this->mergeOptions($options, $recursive);
+    }
+
+    /**
+     * @param array $options
+     * @param bool  $recursive
+     *
+     * @return $this
+     */
+    public function setDefaults(array $options, $recursive = false)
+    {
+
+        return $this->mergeOptions($options, $recursive, true);
     }
 
     /**

@@ -39,7 +39,7 @@ trait ConfigurableTrait
      * Keys are option names, values are option values
      * @var array
      */
-    private $options = [];
+    protected $options = [];
 
     /**
      * Sets the options initially providing default- and optional user options.
@@ -54,7 +54,7 @@ trait ConfigurableTrait
         $this->options = $defaults;
 
         if ($userOptions)
-            $this->setOptions($userOptions, $recursive);
+            $this->mergeOptions($userOptions, $recursive);
     }
 
     /**
@@ -84,7 +84,7 @@ trait ConfigurableTrait
      *
      * @return $this
      */
-    public function setOptions(array $options, $recursive = false, $reverse = false)
+    public function mergeOptions(array $options, $recursive = false, $reverse = false)
     {
 
         $merge = 'array_replace';
@@ -129,10 +129,27 @@ trait ConfigurableTrait
      *
      * @return $this
      */
+    public function setOptions(array $defaults, $recursive = false)
+    {
+
+        return $this->mergeOptions($defaults, $recursive, true);
+    }
+
+    /**
+     * Replaces with all options passed, if they are not set yet.
+     *
+     * This is an alias to ->setOptions with the third parameter set
+     * to true.
+     *
+     * @param array      $defaults   the array of default options
+     * @param bool|false $recursive  should we merge recursively or not
+     *
+     * @return $this
+     */
     public function setDefaults(array $defaults, $recursive = false)
     {
 
-        return $this->setOptions($defaults, $recursive, true);
+        return $this->mergeOptions($defaults, $recursive, true);
     }
 
     /**
@@ -177,21 +194,20 @@ trait ConfigurableTrait
     {
 
         $targetName = $targetName ? $targetName : $name;
-
         if (isset($this->options[$name]))
             $this->options[$target][$targetName] = $this->options[$name];
     }
 
-    public function loadOptions($path, $recursive = false, FormatInterface $format = null)
+    public function loadOptions($path, $optional = false, $recursive = false)
     {
 
-        return $this->setOptions(Config::load($path, $format), $recursive);
+        return $this->mergeOptions(Config::load($path, $optional), $recursive);
     }
 
-    public function loadDefaults($path, $recursive = false, FormatInterface $format = null)
+    public function loadDefaults($path, $optional = false, $recursive = false)
     {
 
-        return $this->setDefaults(Config::load($path, $format), $recursive);
+        return $this->setDefaults(Config::load($path, $optional), $recursive);
     }
 
     public function interpolateOptions(array &$source = null, $defaultValue = null)
