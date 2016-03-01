@@ -33,18 +33,50 @@ class Delegate implements ConfigurableInterface
     use DelegateTrait;
 
     private $container;
+    private $nameSpace;
 
     public function __construct(Container $container, $nameSpace = '')
     {
 
         $this->container = $container;
-        $this->optionNameSpace = $nameSpace;
+        $this->nameSpace = $nameSpace;
     }
 
     protected function getTargetConfigurableObject()
     {
 
         return $this->container;
+    }
+
+    protected function getOptionNameSpace()
+    {
+
+        return $this->nameSpace;
+    }
+}
+
+class DbDelegate implements ConfigurableInterface
+{
+    use DelegateTrait;
+
+    private $container;
+
+    public function __construct(Container $container)
+    {
+
+        $this->container = $container;
+    }
+
+    protected function getTargetConfigurableObject()
+    {
+
+        return $this->container;
+    }
+
+    protected function getOptionNameSpace()
+    {
+
+        return 'db';
     }
 }
 
@@ -82,6 +114,10 @@ class ConfigurableTraitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('12345', $delegate->getOption('db.password'));
 
         $delegate = new Delegate($container, 'db');
+        $this->assertEquals('localhost', $delegate->getOption('host'));
+        $this->assertEquals('12345', $delegate->getOption('password'));
+
+        $delegate = new DbDelegate($container);
         $this->assertEquals('localhost', $delegate->getOption('host'));
         $this->assertEquals('12345', $delegate->getOption('password'));
     }

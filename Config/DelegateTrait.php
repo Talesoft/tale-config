@@ -13,20 +13,19 @@ use Tale\ConfigurableInterface;
 trait DelegateTrait
 {
 
-    protected $optionNameSpace = '';
-
     /**
      * @return array
      */
     public function getOptions()
     {
 
-        if (empty($this->optionNameSpace))
+        $nameSpace = $this->getOptionNameSpace();
+        if (empty($nameSpace))
             return $this->getTargetConfigurableObject()
                         ->getOptions();
 
         return $this->getTargetConfigurableObject()
-                    ->getOption($this->optionNameSpace);
+                    ->getOption($nameSpace);
     }
 
     /**
@@ -39,10 +38,11 @@ trait DelegateTrait
     public function mergeOptions(array $options, $recursive = false, $reverse = false)
     {
 
-        if (!empty($this->optionNameSpace)) {
+        $nameSpace = $this->getOptionNameSpace();
+        if (!empty($nameSpace)) {
 
             $o = [];
-            Config::set($this->optionNameSpace, $options, $o);
+            Config::set($nameSpace, $options, $o);
             $options = $o;
         }
 
@@ -113,11 +113,18 @@ trait DelegateTrait
      */
     protected function getOptionName($name)
     {
-        
-        if (empty($this->optionNameSpace))
+
+        $nameSpace = $this->getOptionNameSpace();
+        if (empty($nameSpace))
             return $name;
 
-        return $this->optionNameSpace.'.'.$name;
+        return $nameSpace.'.'.$name;
+    }
+
+    protected function getOptionNameSpace()
+    {
+
+        return '';
     }
 
     /**
