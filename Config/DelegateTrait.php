@@ -2,6 +2,7 @@
 
 namespace Tale\Config;
 
+use Tale\Config;
 use Tale\ConfigurableInterface;
 
 /**
@@ -12,19 +13,20 @@ use Tale\ConfigurableInterface;
 trait DelegateTrait
 {
 
+    protected $optionNameSpace = '';
+
     /**
      * @return array
      */
     public function getOptions()
     {
 
-        $nameSpace = $this->getOptionNameSpace();
-        if (empty($nameSpace))
+        if (empty($this->optionNameSpace))
             return $this->getTargetConfigurableObject()
                         ->getOptions();
 
         return $this->getTargetConfigurableObject()
-                    ->getOption($nameSpace);
+                    ->getOption($this->optionNameSpace);
     }
 
     /**
@@ -37,9 +39,12 @@ trait DelegateTrait
     public function setOptions(array $options, $recursive = false, $reverse = false)
     {
 
-        $nameSpace = $this->getOptionNameSpace();
-        if (!empty($nameSpace))
-            $options = [$nameSpace => $options];
+        if (!empty($this->optionNameSpace)) {
+
+            $o = [];
+            Config::set($this->optionNameSpace, $options, $o);
+            $options = $o;
+        }
 
         $this->getTargetConfigurableObject()
              ->setOptions($options, $recursive, $reverse);
@@ -78,28 +83,17 @@ trait DelegateTrait
     }
 
     /**
-     * @return string
-     */
-    protected function getOptionNameSpace()
-    {
-
-        return '';
-    }
-
-    /**
      * @param string $name
      *
      * @return string
      */
     protected function getOptionName($name)
     {
-
-        $nameSpace = $this->getOptionNameSpace();
-
-        if (empty($nameSpace))
+        
+        if (empty($this->optionNameSpace))
             return $name;
 
-        return $this->getOptionNameSpace().'.'.$name;
+        return $this->optionNameSpace.'.'.$name;
     }
 
     /**

@@ -39,7 +39,7 @@ trait ConfigurableTrait
      * Keys are option names, values are option values
      * @var array
      */
-    private $_options = [];
+    private $options = [];
 
     /**
      * Sets the options initially providing default- and optional user options.
@@ -51,7 +51,7 @@ trait ConfigurableTrait
     public function defineOptions(array $defaults, array $userOptions = null, $recursive = false)
     {
 
-        $this->_options = $defaults;
+        $this->options = $defaults;
 
         if ($userOptions)
             $this->setOptions($userOptions, $recursive);
@@ -65,7 +65,7 @@ trait ConfigurableTrait
     public function getOptions()
     {
 
-        return $this->_options;
+        return $this->options;
     }
 
     /**
@@ -92,9 +92,9 @@ trait ConfigurableTrait
         if ($recursive)
             $merge .= '_recursive';
 
-        $this->_options = $reverse
-            ? $merge($options, $this->_options)
-            : $merge($this->_options, $options);
+        $this->options = $reverse
+            ? $merge($options, $this->options)
+            : $merge($this->options, $options);
 
         return $this;
     }
@@ -113,9 +113,9 @@ trait ConfigurableTrait
     {
 
         if (strstr($name, '.'))
-            return Config::get($name, $this->_options, $defaultValue);
+            return Config::get($name, $this->options, $defaultValue);
 
-        return isset($this->_options[$name]) ? $this->_options[$name] : $defaultValue;
+        return isset($this->options[$name]) ? $this->options[$name] : $defaultValue;
     }
 
     /**
@@ -146,7 +146,7 @@ trait ConfigurableTrait
     public function setOption($name, $value)
     {
 
-        $this->_options[$name] = $value;
+        $this->options[$name] = $value;
 
         return $this;
     }
@@ -178,8 +178,8 @@ trait ConfigurableTrait
 
         $targetName = $targetName ? $targetName : $name;
 
-        if (isset($this->_options[$name]))
-            $this->_options[$target][$targetName] = $this->_options[$name];
+        if (isset($this->options[$name]))
+            $this->options[$target][$targetName] = $this->options[$name];
     }
 
     public function loadOptions($path, $recursive = false, FormatInterface $format = null)
@@ -197,7 +197,7 @@ trait ConfigurableTrait
     public function interpolateOptions(array &$source = null, $defaultValue = null)
     {
 
-        Config::interpolateArray($this->_options, $source, $defaultValue);
+        Config::interpolateArray($this->options, $source, $defaultValue);
 
         return $this;
     }

@@ -13,7 +13,7 @@ use Tale\Factory\SingletonFactory;
 final class Config
 {
 
-    private static $_formats = [
+    private static $formats = [
         'ini'  => Ini::class,
         'json' => Json::class,
         'php'  => Php::class,
@@ -21,7 +21,7 @@ final class Config
         'yaml' => Yaml::class
     ];
 
-    private static $_formatFactory = null;
+    private static $formatFactory = null;
 
     public static function createFormatFactory(array $formats = null)
     {
@@ -32,12 +32,12 @@ final class Config
     public static function getFormatFactory()
     {
 
-        if (self::$_formatFactory === null)
-            self::$_formatFactory = self::createFormatFactory(
-                self::$_formats
+        if (self::$formatFactory === null)
+            self::$formatFactory = self::createFormatFactory(
+                self::$formats
             );
 
-        return self::$_formatFactory;
+        return self::$formatFactory;
     }
 
     public static function resolve($path)

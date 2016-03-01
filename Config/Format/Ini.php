@@ -10,10 +10,10 @@ class Ini implements FormatInterface
     public function load($path)
     {
 
-        return $this->_getOptionsFromIniArray(parse_ini_file($path, true));
+        return $this->getOptionsFromIniArray(parse_ini_file($path, true));
     }
 
-    private function _getOptionsFromIniArray(array $array)
+    private function getOptionsFromIniArray(array $array)
     {
 
         //TODO: improve this shit.
@@ -24,7 +24,7 @@ class Ini implements FormatInterface
 
                 $result = array_replace_recursive(
                     $result,
-                    $this->_getOptionsFromIniArray($value)
+                    $this->getOptionsFromIniArray($value)
                 );
                 continue;
             }
@@ -52,7 +52,7 @@ class Ini implements FormatInterface
 
             if (is_array($value)) {
 
-                $target[$key] = $this->_getOptionsFromIniArray($value);
+                $target[$key] = $this->getOptionsFromIniArray($value);
                 continue;
             }
 

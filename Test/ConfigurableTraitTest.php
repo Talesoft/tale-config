@@ -32,26 +32,19 @@ class Delegate implements ConfigurableInterface
 {
     use DelegateTrait;
 
-    private $_container;
-    private $_nameSpace;
+    private $container;
 
     public function __construct(Container $container, $nameSpace = '')
     {
 
-        $this->_container = $container;
-        $this->_nameSpace = $nameSpace;
-    }
-
-    protected function getOptionNameSpace()
-    {
-
-        return $this->_nameSpace;
+        $this->container = $container;
+        $this->optionNameSpace = $nameSpace;
     }
 
     protected function getTargetConfigurableObject()
     {
 
-        return $this->_container;
+        return $this->container;
     }
 }
 

@@ -19,10 +19,10 @@ class Xml implements FormatInterface
                 "`talesoft/tale-dom` package"
             );
 
-        return $this->_getOptionsFromElement(Element::fromFile($path));
+        return $this->getOptionsFromElement(Element::fromFile($path));
     }
 
-    private function _getOptionsFromElement(Element $element)
+    private function getOptionsFromElement(Element $element)
     {
 
         if (!$element->hasChildren())
@@ -35,7 +35,7 @@ class Xml implements FormatInterface
                 return $child->getText();
 
             if ($child instanceof Element)
-                $result[$child->getName()] = $this->_getOptionsFromElement($child);
+                $result[$child->getName()] = $this->getOptionsFromElement($child);
         }
 
         return $result;
